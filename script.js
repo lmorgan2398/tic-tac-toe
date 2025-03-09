@@ -45,3 +45,15 @@ const gameboard = (function() {
 
     return { getBoard, resetBoard, placeMarker, checkWinConditions, checkForDraw }
 })();
+
+
+
+const createPlayer = function(name, marker) {
+    const playerName = name;
+    const getName = () => name;
+
+    const playerMarker = marker;
+    const getMarker = () => marker;
+
+    return { getName, getMarker }
+};
