@@ -49,11 +49,79 @@ const gameboard = (function() {
 
 
 const createPlayer = function(name, marker) {
-    const playerName = name;
-    const getName = () => name;
+    let playerName = name;
+    const getName = () => playerName;
+    const setName = (newName) => {
+        playerName = newName;
+    }
 
     const playerMarker = marker;
     const getMarker = () => marker;
 
-    return { getName, getMarker }
+    return { getName, setName, getMarker }
 };
+
+const playerX = createPlayer('Player One', 'x');
+const playerO = createPlayer('Player Two', 'o');
+
+
+
+const gameController = (function(playerOne, playerTwo) {
+    let matchCount = 0;
+    const matchCountUp = () => matchCount++;
+    const getMatchCount = () => matchCount;
+
+    let turnCount = 0;
+    const turnCountUp = () => turnCount++;
+    const getTurnCount = () => turnCount;
+    const resetTurnCount = () => turnCount = 0;
+
+    let currentPlayer = playerOne;
+    const getCurrentPlayer = () => currentPlayer;
+    const updateCurrentPlayer = () => {
+        let firstTurnPlayer;
+        let secondTurnPlayer;
+        if(matchCount % 2 === 0){
+            firstTurnPlayer = playerOne;
+            secondTurnPlayer = playerTwo;
+        } else {
+            firstTurnPlayer = playerTwo;
+            secondTurnPlayer = playerOne;
+        }
+
+        if(turnCount % 2 === 0){
+            currentPlayer = firstTurnPlayer;
+        } else {
+            currentPlayer = secondTurnPlayer;
+        }
+    }
+
+    const playTurn = (position) => {
+        let currentMarker = currentPlayer.getMarker();
+        gameboard.placeMarker(position, currentMarker);
+
+        if(gameboard.checkWinConditions(currentMarker)){
+            alert(`${currentPlayer.getName()} wins!`);
+            newMatch();
+            return;
+        } else if(gameboard.checkForDraw()){
+            alert(`Draw!`);
+            newMatch();
+            return;
+        } else {
+            turnCountUp();
+            updateCurrentPlayer();
+            return;
+        }
+    }
+
+    const newMatch = () => {
+        gameboard.resetBoard();
+        gameController.matchCountUp();
+        gameController.resetTurnCount();
+        gameController.updateCurrentPlayer();
+    }
+
+    return { turnCountUp, getTurnCount, resetTurnCount, matchCountUp, getMatchCount, getCurrentPlayer, updateCurrentPlayer, playTurn, newMatch }
+
+})(playerX, playerO);
