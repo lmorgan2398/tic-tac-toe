@@ -13,7 +13,6 @@ const gameboard = (function() {
         };
     };
 
-
     const checkWinConditions = (marker) => {
         const winConditions = [
             [0, 3, 6],
@@ -25,6 +24,7 @@ const gameboard = (function() {
             [0, 4, 8],
             [2, 4, 6]
         ];
+
 
         for(let i = 0; i < 8; i++){
             let [a, b, c] = winConditions[i];
@@ -48,6 +48,7 @@ const gameboard = (function() {
 
 
 
+
 const createPlayer = function(name, marker) {
     let playerName = name;
     const getName = () => playerName;
@@ -67,6 +68,7 @@ const createPlayer = function(name, marker) {
 
 const playerX = createPlayer('Player One', 'x');
 const playerO = createPlayer('Player Two', 'o');
+
 
 
 
@@ -127,6 +129,13 @@ const gameController = (function(playerOne, playerTwo) {
         gameController.updateCurrentPlayer();
     }
 
-    return { turnCountUp, getTurnCount, resetTurnCount, matchCountUp, getMatchCount, getCurrentPlayer, updateCurrentPlayer, playTurn, newMatch }
-
+    return { turnCountUp, 
+             getTurnCount, 
+             resetTurnCount, 
+             matchCountUp, 
+             getMatchCount, 
+             getCurrentPlayer, 
+             updateCurrentPlayer, 
+             playTurn, 
+             newMatch }
 })(playerX, playerO);
