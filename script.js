@@ -56,9 +56,13 @@ const createPlayer = function(name, marker) {
     }
 
     const playerMarker = marker;
-    const getMarker = () => marker;
+    const getMarker = () => playerMarker;
 
-    return { getName, setName, getMarker }
+    let score = 0;
+    const addPoint = () => score++;
+    const getScore = () => score; 
+
+    return { getName, setName, getMarker, addPoint, getScore }
 };
 
 const playerX = createPlayer('Player One', 'x');
@@ -102,6 +106,7 @@ const gameController = (function(playerOne, playerTwo) {
 
         if(gameboard.checkWinConditions(currentMarker)){
             alert(`${currentPlayer.getName()} wins!`);
+            currentPlayer.addPoint();
             newMatch();
             return;
         } else if(gameboard.checkForDraw()){
