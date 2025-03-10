@@ -10,7 +10,9 @@ const gameboard = (function() {
     const placeMarker = (position, marker) => {
         if(board[position] === '') {
             board[position] = marker;
-        };
+        } else {
+            return;
+        }
     };
 
     const checkWinConditions = (marker) => {
@@ -24,7 +26,6 @@ const gameboard = (function() {
             [0, 4, 8],
             [2, 4, 6]
         ];
-
 
         for(let i = 0; i < 8; i++){
             let [a, b, c] = winConditions[i];
@@ -49,7 +50,7 @@ const gameboard = (function() {
 
 
 
-const createPlayer = function(name, marker) {
+const createPlayer = function(name, marker, status) {
     let playerName = name;
     const getName = () => playerName;
     const setName = (newName) => {
@@ -63,11 +64,13 @@ const createPlayer = function(name, marker) {
     const addPoint = () => score++;
     const getScore = () => score; 
 
-    return { getName, setName, getMarker, addPoint, getScore }
+    let cpuStatus = status;
+    let getCpuStatus = () => cpuStatus;
+    return { getName, setName, getMarker, addPoint, getScore, getCpuStatus }
 };
 
-const playerX = createPlayer('Player One', 'x');
-const playerO = createPlayer('Player Two', 'o');
+const playerX = createPlayer('Player One', 'x', 'player');
+const playerO = createPlayer('Player Two', 'o', 'cpu');
 
 
 
@@ -76,6 +79,7 @@ const gameController = (function(playerOne, playerTwo) {
     let matchCount = 0;
     const matchCountUp = () => matchCount++;
     const getMatchCount = () => matchCount;
+    const resetMatchCount = () => matchCount = 0;
 
     let turnCount = 0;
     const turnCountUp = () => turnCount++;
@@ -100,12 +104,13 @@ const gameController = (function(playerOne, playerTwo) {
         } else {
             currentPlayer = secondTurnPlayer;
         }
+
+        playCpuTurn();
     }
 
-    const playTurn = (position) => {
-        let currentMarker = currentPlayer.getMarker();
-        gameboard.placeMarker(position, currentMarker);
 
+    const advanceTurn = () => {
+        let currentMarker = currentPlayer.getMarker();
         if(gameboard.checkWinConditions(currentMarker)){
             alert(`${currentPlayer.getName()} wins!`);
             currentPlayer.addPoint();
@@ -122,11 +127,69 @@ const gameController = (function(playerOne, playerTwo) {
         }
     }
 
+    const playTurn = (position) => {
+        let currentMarker = currentPlayer.getMarker();
+        gameboard.placeMarker(position, currentMarker);
+
+        advanceTurn();
+    }
+
+    const playCpuTurn = () => {
+        let currentMarker = currentPlayer.getMarker();
+        let enemyMarker;
+        if(currentMarker === 'x') {
+            enemyMarker = 'o';
+        } else {
+            enemyMarker = 'x';
+        }
+        if(currentPlayer.getCpuStatus() === 'cpu') {
+            let winConditions = [          
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+            ]
+
+            if(!gameboard.getBoard().some(cell => cell === currentPlayer.getMarker())) {
+                let cpuPosition = Math.floor(Math.random() * 9)
+                gameboard.placeMarker(cpuPosition, currentMarker);
+                advanceTurn();
+                return;
+            } else {
+                for(let i = 0; i < 9; i++){
+                    let [a, b, c] = winConditions[i];
+                    let board = gameboard.getBoard();
+                    if((board[a] === currentMarker || board[b] === currentMarker || board[c] === currentMarker) && (board[a] !== enemyMarker && board[b] !== enemyMarker && board[c] !== enemyMarker)){
+                        let winCondition = winConditions[i];
+                        for(let j = 0; j < 3; j++){
+                            if(board[winCondition[j]] === '') {
+                                gameboard.placeMarker(winCondition[j], currentMarker);
+                                advanceTurn();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     const newMatch = () => {
         gameboard.resetBoard();
-        gameController.matchCountUp();
-        gameController.resetTurnCount();
-        gameController.updateCurrentPlayer();
+        matchCountUp();
+        resetTurnCount();
+        updateCurrentPlayer();
+    }
+
+    const newGame = () => {
+        gameboard.resetBoard();
+        resetMatchCount();
+        resetTurnCount();
+        updateCurrentPlayer();
     }
 
     return { turnCountUp, 
@@ -134,8 +197,11 @@ const gameController = (function(playerOne, playerTwo) {
              resetTurnCount, 
              matchCountUp, 
              getMatchCount, 
+             resetMatchCount,
              getCurrentPlayer, 
              updateCurrentPlayer, 
-             playTurn, 
-             newMatch }
+             playTurn,
+             playCpuTurn, 
+             newMatch,
+             newGame }
 })(playerX, playerO);
