@@ -160,7 +160,7 @@ const gameController = (function(playerOne, playerTwo) {
                 advanceTurn();
                 return;
             } else {
-                for(let i = 0; i < 9; i++){
+                for(let i = 0; i < 8; i++){
                     let [a, b, c] = winConditions[i];
                     let board = gameboard.getBoard();
                     if((board[a] === currentMarker || board[b] === currentMarker || board[c] === currentMarker) && (board[a] !== enemyMarker && board[b] !== enemyMarker && board[c] !== enemyMarker)){
@@ -174,6 +174,14 @@ const gameController = (function(playerOne, playerTwo) {
                         }
                     }
                 }
+                let cpuPosition = Math.floor(Math.random() * 9);
+                let board = gameboard.getBoard();
+                while(board[cpuPosition] !== '') {
+                    cpuPosition = Math.floor(Math.random() * 9);
+                }
+                gameboard.placeMarker(cpuPosition, currentMarker);
+                advanceTurn();
+                return;
             }
         }
     }
