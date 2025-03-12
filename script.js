@@ -113,20 +113,23 @@ const gameController = (function(playerOne, playerTwo) {
         displayController.renderBoard();
         let currentMarker = currentPlayer.getMarker();
         if(gameboard.checkWinConditions(currentMarker)){
-            alert(`${currentPlayer.getName()} wins!`);
-            currentPlayer.addPoint();
-            newMatch();
-            displayController.renderBoard();
+            setTimeout(() => {
+                    alert(`${currentPlayer.getName()} wins!`);
+                    currentPlayer.addPoint();
+                    newMatch();
+                    displayController.renderBoard();
+                }, 100)
             return;
         } else if(gameboard.checkForDraw()){
-            alert(`Draw!`);
-            newMatch();
-            displayController.renderBoard();
+            setTimeout(() => {
+                alert(`Draw!`);
+                newMatch();
+                displayController.renderBoard();
+            }, 100)
             return;
         } else {
             turnCountUp();
             updateCurrentPlayer();
-            displayController.renderBoard();
             return;
         }
     }
@@ -134,7 +137,6 @@ const gameController = (function(playerOne, playerTwo) {
     const playTurn = (position) => {
         let currentMarker = currentPlayer.getMarker();
         gameboard.placeMarker(position, currentMarker);
-
         advanceTurn();
     }
 
