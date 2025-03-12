@@ -105,7 +105,6 @@ const gameController = (function(playerOne, playerTwo) {
         } else {
             currentPlayer = secondTurnPlayer;
         }
-
         playCpuTurn();
     }
 
@@ -115,11 +114,11 @@ const gameController = (function(playerOne, playerTwo) {
         let currentMarker = currentPlayer.getMarker();
         if(gameboard.checkWinConditions(currentMarker)){
             setTimeout(() => {
-                    alert(`${currentPlayer.getName()} wins!`);
-                    currentPlayer.addPoint();
-                    newMatch();
-                    displayController.renderBoard();
-                }, 100)
+                alert(`${currentPlayer.getName()} wins!`);
+                currentPlayer.addPoint();
+                newMatch();
+                displayController.renderBoard();
+            }, 100)
             return;
         } else if(gameboard.checkForDraw()){
             setTimeout(() => {
@@ -166,7 +165,11 @@ const gameController = (function(playerOne, playerTwo) {
             ]
 
             if(!gameboard.getBoard().some(cell => cell === currentPlayer.getMarker())) {
+                let board = gameboard.getBoard();
                 let cpuPosition = Math.floor(Math.random() * 9)
+                while(board[cpuPosition] !== '') {
+                    cpuPosition = Math.floor(Math.random() * 9);
+                }
                 gameboard.placeMarker(cpuPosition, currentMarker);
                 advanceTurn();
                 return;
