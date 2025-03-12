@@ -110,19 +110,23 @@ const gameController = (function(playerOne, playerTwo) {
 
 
     const advanceTurn = () => {
+        displayController.renderBoard();
         let currentMarker = currentPlayer.getMarker();
         if(gameboard.checkWinConditions(currentMarker)){
             alert(`${currentPlayer.getName()} wins!`);
             currentPlayer.addPoint();
             newMatch();
+            displayController.renderBoard();
             return;
         } else if(gameboard.checkForDraw()){
             alert(`Draw!`);
             newMatch();
+            displayController.renderBoard();
             return;
         } else {
             turnCountUp();
             updateCurrentPlayer();
+            displayController.renderBoard();
             return;
         }
     }
@@ -213,3 +217,37 @@ const gameController = (function(playerOne, playerTwo) {
              newMatch,
              newGame }
 })(playerX, playerO);
+
+
+
+
+const displayController = (function() {
+
+    let board = gameboard.getBoard();
+
+    let displayCells = document.querySelectorAll('.cell');
+
+    const initBoard = () => {
+        for(let cell of displayCells) {
+            cell.addEventListener('click', () => {
+                let indexNumber = cell.dataset.index;
+                gameController.playTurn(indexNumber);
+            })
+        }
+    }
+    const renderBoard = () => {
+        for(let cell of displayCells){
+            let indexNumber = cell.dataset.index;
+            cell.textContent = board[indexNumber];
+        }
+    }
+    return { initBoard, renderBoard }
+})()
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    displayController.initBoard();
+    gameController.updateCurrentPlayer();
+})
