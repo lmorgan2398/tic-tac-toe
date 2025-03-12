@@ -10,8 +10,9 @@ const gameboard = (function() {
     const placeMarker = (position, marker) => {
         if(board[position] === '') {
             board[position] = marker;
+            return true;
         } else {
-            return;
+            return false;
         }
     };
 
@@ -136,7 +137,11 @@ const gameController = (function(playerOne, playerTwo) {
 
     const playTurn = (position) => {
         let currentMarker = currentPlayer.getMarker();
-        gameboard.placeMarker(position, currentMarker);
+        if(!gameboard.placeMarker(position, currentMarker)){
+            return;
+        } else {
+            gameboard.placeMarker(position, currentMarker);
+        }
         advanceTurn();
     }
 
