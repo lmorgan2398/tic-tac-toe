@@ -88,10 +88,11 @@ const gameController = (function(playerOne, playerTwo) {
     const resetTurnCount = () => turnCount = 0;
 
     let currentPlayer = playerOne;
+    let firstTurnPlayer;
+    let secondTurnPlayer;
     const getCurrentPlayer = () => currentPlayer;
     const updateCurrentPlayer = () => {
-        let firstTurnPlayer;
-        let secondTurnPlayer;
+
         if(matchCount % 2 === 0){
             firstTurnPlayer = playerOne;
             secondTurnPlayer = playerTwo;
@@ -106,6 +107,7 @@ const gameController = (function(playerOne, playerTwo) {
             currentPlayer = secondTurnPlayer;
         }
         playCpuTurn();
+
     }
 
 
@@ -147,6 +149,8 @@ const gameController = (function(playerOne, playerTwo) {
     const playCpuTurn = () => {
         let currentMarker = currentPlayer.getMarker();
         let enemyMarker;
+        let board = gameboard.getBoard();
+
         if(currentMarker === 'x') {
             enemyMarker = 'o';
         } else {
@@ -164,39 +168,101 @@ const gameController = (function(playerOne, playerTwo) {
             [2, 4, 6]
             ]
 
-            if(!gameboard.getBoard().some(cell => cell === currentPlayer.getMarker())) {
-                let board = gameboard.getBoard();
-                let cpuPosition = Math.floor(Math.random() * 9)
-                while(board[cpuPosition] !== '') {
-                    cpuPosition = Math.floor(Math.random() * 9);
-                }
-                gameboard.placeMarker(cpuPosition, currentMarker);
-                advanceTurn();
-                return;
-            } else {
+            // If there is an available win condition on the board, play to win
                 for(let i = 0; i < 8; i++){
                     let [a, b, c] = winConditions[i];
-                    let board = gameboard.getBoard();
-                    if((board[a] === currentMarker || board[b] === currentMarker || board[c] === currentMarker) && (board[a] !== enemyMarker && board[b] !== enemyMarker && board[c] !== enemyMarker)){
-                        let winCondition = winConditions[i];
+                    if(board[a] === currentMarker && board[c] === currentMarker && board[b] === ''){
+                        console.log('should win');
+                        gameboard.placeMarker(b, currentMarker);
+                        advanceTurn();
+                        return;
+                    }
+                };
+
+                // If there is not an immediate win condition, make sure the enemy
+                // doesn't win on the next move
+                for(let i = 0; i < 8; i++) {
+                    let [a, b, c] = winConditions[i];
+                    if(board[a] === enemyMarker && board[b] === enemyMarker || board[a] === enemyMarker && board[c] === enemyMarker || board[b] === enemyMarker && board[c] === enemyMarker) {
                         for(let j = 0; j < 3; j++){
-                            if(board[winCondition[j]] === '') {
+                            let winCondition = winConditions[i];
+                            if(board[winCondition[j]] === ''){
+                                console.log('loss prevented');
                                 gameboard.placeMarker(winCondition[j], currentMarker);
                                 advanceTurn();
                                 return;
                             }
                         }
                     }
-                }
+                };
+
+                // If there is no win condition available and the enemy is not about to 
+                // win, then that means the next best move is to play corners to open up 
+                // a win condition -- if corners are all blocked off, that means there is
+                // already a win condition for one player on the board, so not fallback is 
+                //necessary
+                console.log('playing corner');
+                let fourCorners = [0, 2, 8, 6];
+                let fourCornersArray = [board[0], board[2], board[8], board[6]];
+                console.log(fourCornersArray);
+                console.log(fourCornersArray.includes(''));
+                if(fourCornersArray.includes('')){
+                    let randomCornerIndex = Math.floor(Math.random() * 4);
+                    let cpuPosition =  fourCorners[randomCornerIndex];
+                    console.log(cpuPosition);
+                    while(board[cpuPosition] !== '') {
+                        randomCornerIndex = Math.floor(Math.random() * 4);
+                        cpuPosition = fourCorners[randomCornerIndex];
+                    }
+                    console.log(cpuPosition);
+                    gameboard.placeMarker(cpuPosition, currentMarker);
+                    advanceTurn();
+                    return;               
+                };
+
+                console.log('random');
                 let cpuPosition = Math.floor(Math.random() * 9);
-                let board = gameboard.getBoard();
                 while(board[cpuPosition] !== '') {
                     cpuPosition = Math.floor(Math.random() * 9);
                 }
                 gameboard.placeMarker(cpuPosition, currentMarker);
                 advanceTurn();
                 return;
-            }
+            
+
+            // if(!gameboard.getBoard().some(cell => cell === currentPlayer.getMarker())) {
+            //     let board = gameboard.getBoard();
+            //     let cpuPosition = Math.floor(Math.random() * 9)
+            //     while(board[cpuPosition] !== '') {
+            //         cpuPosition = Math.floor(Math.random() * 9);
+            //     }
+            //     gameboard.placeMarker(cpuPosition, currentMarker);
+            //     advanceTurn();
+            //     return;
+            // } else {
+            //     for(let i = 0; i < 8; i++){
+            //         let [a, b, c] = winConditions[i];
+            //         let board = gameboard.getBoard();
+            //         if((board[a] === currentMarker || board[b] === currentMarker || board[c] === currentMarker) && (board[a] !== enemyMarker && board[b] !== enemyMarker && board[c] !== enemyMarker)){
+            //             let winCondition = winConditions[i];
+            //             for(let j = 0; j < 3; j++){
+            //                 if(board[winCondition[j]] === '') {
+            //                     gameboard.placeMarker(winCondition[j], currentMarker);
+            //                     advanceTurn();
+            //                     return;
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     let cpuPosition = Math.floor(Math.random() * 9);
+            //     let board = gameboard.getBoard();
+            //     while(board[cpuPosition] !== '') {
+            //         cpuPosition = Math.floor(Math.random() * 9);
+            //     }
+            //     gameboard.placeMarker(cpuPosition, currentMarker);
+            //     advanceTurn();
+            //     return;
+            // }
         }
     }
 
