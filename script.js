@@ -146,6 +146,9 @@ const gameController = (function(playerOne, playerTwo) {
         advanceTurn();
     }
 
+    let cpuCurrentCorner;
+    let cpuCornerDirection;
+    let currentCornerIndex;
     const playCpuTurn = () => {
         let currentMarker = currentPlayer.getMarker();
         let enemyMarker;
@@ -201,15 +204,58 @@ const gameController = (function(playerOne, playerTwo) {
                 // a win condition -- if corners are all blocked off, that means there is
                 // already a win condition for one player on the board, so not fallback is 
                 //necessary
-                console.log('playing corner');
                 let fourCorners = [0, 2, 8, 6];
                 let fourCornersArray = [board[0], board[2], board[8], board[6]];
-                console.log(fourCornersArray);
-                console.log(fourCornersArray.includes(''));
-                if(fourCornersArray.includes('')){
-                    let randomCornerIndex = Math.floor(Math.random() * 4);
-                    let cpuPosition =  fourCorners[randomCornerIndex];
-                    console.log(cpuPosition);
+
+                if(!fourCornersArray.includes('x')){
+                    console.log('playing corner');
+                    currentCornerIndex = Math.floor(Math.random() * 4);
+                    let cpuPosition =  fourCorners[currentCornerIndex];
+                    cpuCurrentCorner = cpuPosition;
+                    gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                    advanceTurn();
+                    return;
+                } else {
+                    if(board[cpuCurrentCorner] === 0){
+                        if(board[1] === enemyMarker || board[5] === enemyMarker){
+                            cpuCornerDirection = 'counter';
+                        } else if(board[3] === enemyMarker || board[7] === enemyMarker){
+                            cpuCornerDirection = 'clock';
+                        } else if(board[4] === enemyMarker){
+                            cpuCornerDirection = 'opposite';
+                        }
+
+                    } else if(board[cpuCurrentCorner] === 2){
+                        if(board[7] === enemyMarker || board[5] === enemyMarker){
+                            cpuCornerDirection = 'counter';
+                        } else if(board[1] === enemyMarker || board[3] === enemyMarker){
+                            cpuCornerDirection = 'clock';
+                        } else if(board[4] === enemyMarker){
+                            cpuCornerDirection = 'opposite';
+                        }
+
+                    } else if(board[cpuCurrentCorner] === 8){
+                        if(board[7] === enemyMarker || board[3] === enemyMarker){
+                            cpuCornerDirection = 'counter';
+                        } else if(board[1] === enemyMarker || board[5] === enemyMarker){
+                            cpuCornerDirection = 'clock';
+                        } else if(board[4] === enemyMarker){
+                            cpuCornerDirection = 'opposite';
+                        }
+
+                    } else if(board[cpuCurrentCorner] === 6){
+                        if(board[1] === enemyMarker || board[3] === enemyMarker){
+                            cpuCornerDirection = 'counter';
+                        } else if(board[5] === enemyMarker || board[7] === enemyMarker){
+                            cpuCornerDirection = 'clock';
+                        } else if(board[4] === enemyMarker){
+                            cpuCornerDirection = 'opposite';
+                        } 
+                    }
+
+
+                    if()
+                }             
                     while(board[cpuPosition] !== '') {
                         randomCornerIndex = Math.floor(Math.random() * 4);
                         cpuPosition = fourCorners[randomCornerIndex];
@@ -220,6 +266,9 @@ const gameController = (function(playerOne, playerTwo) {
                     return;               
                 };
 
+
+
+                // If things have gone really wrong, play a random spot as a fallback
                 console.log('random');
                 let cpuPosition = Math.floor(Math.random() * 9);
                 while(board[cpuPosition] !== '') {
@@ -228,41 +277,6 @@ const gameController = (function(playerOne, playerTwo) {
                 gameboard.placeMarker(cpuPosition, currentMarker);
                 advanceTurn();
                 return;
-            
-
-            // if(!gameboard.getBoard().some(cell => cell === currentPlayer.getMarker())) {
-            //     let board = gameboard.getBoard();
-            //     let cpuPosition = Math.floor(Math.random() * 9)
-            //     while(board[cpuPosition] !== '') {
-            //         cpuPosition = Math.floor(Math.random() * 9);
-            //     }
-            //     gameboard.placeMarker(cpuPosition, currentMarker);
-            //     advanceTurn();
-            //     return;
-            // } else {
-            //     for(let i = 0; i < 8; i++){
-            //         let [a, b, c] = winConditions[i];
-            //         let board = gameboard.getBoard();
-            //         if((board[a] === currentMarker || board[b] === currentMarker || board[c] === currentMarker) && (board[a] !== enemyMarker && board[b] !== enemyMarker && board[c] !== enemyMarker)){
-            //             let winCondition = winConditions[i];
-            //             for(let j = 0; j < 3; j++){
-            //                 if(board[winCondition[j]] === '') {
-            //                     gameboard.placeMarker(winCondition[j], currentMarker);
-            //                     advanceTurn();
-            //                     return;
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     let cpuPosition = Math.floor(Math.random() * 9);
-            //     let board = gameboard.getBoard();
-            //     while(board[cpuPosition] !== '') {
-            //         cpuPosition = Math.floor(Math.random() * 9);
-            //     }
-            //     gameboard.placeMarker(cpuPosition, currentMarker);
-            //     advanceTurn();
-            //     return;
-            // }
         }
     }
 
