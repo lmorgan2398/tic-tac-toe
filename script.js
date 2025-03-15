@@ -132,6 +132,8 @@ const gameController = (function(playerOne, playerTwo) {
         } else {
             turnCountUp();
             updateCurrentPlayer();
+            console.log(cpuCurrentCorner);
+            console.log(currentCornerIndex);
             return;
         }
     }
@@ -203,80 +205,182 @@ const gameController = (function(playerOne, playerTwo) {
                 // win, then that means the next best move is to play corners to open up 
                 // a win condition -- if corners are all blocked off, that means there is
                 // already a win condition for one player on the board, so not fallback is 
-                //necessary
+                // necessary
                 let fourCorners = [0, 2, 8, 6];
                 let fourCornersArray = [board[0], board[2], board[8], board[6]];
+                if(firstTurnPlayer === currentPlayer){
+                    console.log(cpuCurrentCorner);
+                    if(!fourCornersArray.includes(currentMarker)){
+                        console.log('playing first corner');
+                        currentCornerIndex = Math.floor(Math.random() * 4);
+                        cpuCurrentCorner =  fourCorners[currentCornerIndex];
+                        while(board[cpuCurrentCorner] !== ''){
+                            currentCornerIndex = Math.floor(Math.random() * 4);
+                            cpuCurrentCorner =  fourCorners[currentCornerIndex];
+                        }
+                        gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                        advanceTurn();
+                        return;
+                    } else {
+                        console.log('after first turn played')
+                        console.log(cpuCurrentCorner);
+                        console.log(board[cpuCurrentCorner]);
+                        if(cpuCurrentCorner === 0){
+                            if(board[1] === enemyMarker || board[5] === enemyMarker){
+                                cpuCornerDirection = 'counter';
+                            } else if(board[3] === enemyMarker || board[7] === enemyMarker){
+                                cpuCornerDirection = 'clock';
+                            } else if(board[4] === enemyMarker){
+                                cpuCornerDirection = 'opposite';
+                            }
 
-                if(!fourCornersArray.includes('x')){
-                    console.log('playing corner');
-                    currentCornerIndex = Math.floor(Math.random() * 4);
-                    let cpuPosition =  fourCorners[currentCornerIndex];
-                    cpuCurrentCorner = cpuPosition;
-                    gameboard.placeMarker(cpuCurrentCorner, currentMarker);
-                    advanceTurn();
-                    return;
+                        } else if(cpuCurrentCorner === 2){
+                            if(board[7] === enemyMarker || board[5] === enemyMarker){
+                                cpuCornerDirection = 'counter';
+                            } else if(board[1] === enemyMarker || board[3] === enemyMarker){
+                                cpuCornerDirection = 'clock';
+                            } else if(board[4] === enemyMarker){
+                                cpuCornerDirection = 'opposite';
+                            }
+
+                        } else if(cpuCurrentCorner === 8){
+                            if(board[7] === enemyMarker || board[3] === enemyMarker){
+                                cpuCornerDirection = 'counter';
+                            } else if(board[1] === enemyMarker || board[5] === enemyMarker){
+                                cpuCornerDirection = 'clock';
+                            } else if(board[4] === enemyMarker){
+                                cpuCornerDirection = 'opposite';
+                            }
+
+                        } else if(cpuCurrentCorner === 6){
+                            if(board[1] === enemyMarker || board[3] === enemyMarker){
+                                cpuCornerDirection = 'counter';
+                            } else if(board[5] === enemyMarker || board[7] === enemyMarker){
+                                cpuCornerDirection = 'clock';
+                            } else if(board[4] === enemyMarker){
+                                cpuCornerDirection = 'opposite';
+                            } 
+                        }
+
+                        if(cpuCornerDirection === 'counter'){
+                            console.log('counter');
+                            if(currentCornerIndex === 0){
+                                currentCornerIndex = 3;
+                            } else {
+                                currentCornerIndex--;
+                            }
+                            cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            console.log(cpuCurrentCorner);
+                            while(board[cpuCurrentCorner] !== ''){
+                                if(currentCornerIndex === 0){
+                                    currentCornerIndex = 3;
+                                } else {
+                                    currentCornerIndex--;
+                                }
+                                cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            }
+                            gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                            advanceTurn();
+                            return;
+                        } else if(cpuCornerDirection === 'clock'){
+                            console.log('clock');
+                            if(currentCornerIndex === 3){
+                                currentCornerIndex = 0;
+                            } else {
+                                currentCornerIndex++;
+                            }
+                            cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            console.log(cpuCurrentCorner);
+                            while(board[cpuCurrentCorner] !== ''){
+                                if(currentCornerIndex === 3){
+                                    currentCornerIndex = 0;
+                                } else {
+                                    currentCornerIndex++;
+                                }
+                                cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            }
+                            gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                            advanceTurn();
+                            return;
+                        } else if(cpuCornerDirection === 'opposite'){
+                            console.log('opposite');
+                            if(currentCornerIndex === 0 || currentCornerIndex === 1){
+                                currentCornerIndex++;
+                                currentCornerIndex++;
+                            } else if(currentCornerIndex === 2 || currentCornerIndex === 3){
+                                currentCornerIndex--;
+                                currentCornerIndex--;
+                            }
+                            cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            console.log(cpuCurrentCorner);
+                            while(board[cpuCurrentCorner] !== ''){
+                                if(currentCornerIndex === 0 || currentCornerIndex === 1){
+                                    currentCornerIndex++;
+                                    currentCornerIndex++;
+                                } else if(currentCornerIndex === 2 || currentCornerIndex === 3){
+                                    currentCornerIndex--;
+                                    currentCornerIndex--;
+                                }
+                                cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            }
+                            gameboard.placeMarker(cpuCurrentCorner, currentMarker);     
+                            advanceTurn();
+                            return;
+                        } else {
+                            console.log('random');
+                            currentCornerIndex = Math.floor(Math.random() * 4);
+                            cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            while(board[cpuCurrentCorner] !== '') {
+                                currentCornerIndex = Math.floor(Math.random() * 4);
+                                cpuCurrentCorner = fourCorners[currentCornerIndex];
+                            }
+                            gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                            advanceTurn();
+                            return;
+                        }   
+                    }
                 } else {
-                    if(board[cpuCurrentCorner] === 0){
-                        if(board[1] === enemyMarker || board[5] === enemyMarker){
-                            cpuCornerDirection = 'counter';
-                        } else if(board[3] === enemyMarker || board[7] === enemyMarker){
-                            cpuCornerDirection = 'clock';
-                        } else if(board[4] === enemyMarker){
-                            cpuCornerDirection = 'opposite';
+                    if(board[4] === ''){
+                        console.log('center');
+                        gameboard.placeMarker(4, currentMarker);
+                        advanceTurn();
+                        return;
+                    } else if(board[4] === enemyMarker) {
+                        console.log('random corner')
+                        currentCornerIndex = Math.floor(Math.random() * 4);
+                        cpuCurrentCorner = fourCorners[currentCornerIndex];
+                        while(board[cpuCurrentCorner] !== '') {
+                            currentCornerIndex = Math.floor(Math.random() * 4);
+                            cpuCurrentCorner = fourCorners[currentCornerIndex];
                         }
-
-                    } else if(board[cpuCurrentCorner] === 2){
-                        if(board[7] === enemyMarker || board[5] === enemyMarker){
-                            cpuCornerDirection = 'counter';
-                        } else if(board[1] === enemyMarker || board[3] === enemyMarker){
-                            cpuCornerDirection = 'clock';
-                        } else if(board[4] === enemyMarker){
-                            cpuCornerDirection = 'opposite';
+                        gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                        advanceTurn();
+                        return;
+                    } else {
+                        console.log('random side');
+                        if(board[0] === enemyMarker && board[8] === enemyMarker || board[2] === enemyMarker && board[6] === enemyMarker){
+                            let randomSide = [1, 3, 5, 7];
+                            let randomSideIndex = Math.floor(Math.random() * 4);
+                            let cpuPosition = randomSide[randomSideIndex];
+                            while(board[cpuPosition] !== ''){
+                                randomSideIndex = Math.floor(Math.random() * 4);
+                                cpuPosition = randomSide[randomSideIndex];
+                            }
+                            gameboard.placeMarker(cpuPosition, currentMarker);
+                            advanceTurn();
+                            return;
+                        } else {
+                            console.log('random');
+                            let cpuPosition = Math.floor(Math.random() * 9);
+                            while(board[cpuPosition] !== '') {
+                                cpuPosition = Math.floor(Math.random() * 9);
+                            }
+                            gameboard.placeMarker(cpuPosition, currentMarker);
+                            advanceTurn();
+                            return;
                         }
-
-                    } else if(board[cpuCurrentCorner] === 8){
-                        if(board[7] === enemyMarker || board[3] === enemyMarker){
-                            cpuCornerDirection = 'counter';
-                        } else if(board[1] === enemyMarker || board[5] === enemyMarker){
-                            cpuCornerDirection = 'clock';
-                        } else if(board[4] === enemyMarker){
-                            cpuCornerDirection = 'opposite';
-                        }
-
-                    } else if(board[cpuCurrentCorner] === 6){
-                        if(board[1] === enemyMarker || board[3] === enemyMarker){
-                            cpuCornerDirection = 'counter';
-                        } else if(board[5] === enemyMarker || board[7] === enemyMarker){
-                            cpuCornerDirection = 'clock';
-                        } else if(board[4] === enemyMarker){
-                            cpuCornerDirection = 'opposite';
-                        } 
-                    }
-
-
-                    if()
+                    };
                 }             
-                    while(board[cpuPosition] !== '') {
-                        randomCornerIndex = Math.floor(Math.random() * 4);
-                        cpuPosition = fourCorners[randomCornerIndex];
-                    }
-                    console.log(cpuPosition);
-                    gameboard.placeMarker(cpuPosition, currentMarker);
-                    advanceTurn();
-                    return;               
-                };
-
-
-
-                // If things have gone really wrong, play a random spot as a fallback
-                console.log('random');
-                let cpuPosition = Math.floor(Math.random() * 9);
-                while(board[cpuPosition] !== '') {
-                    cpuPosition = Math.floor(Math.random() * 9);
-                }
-                gameboard.placeMarker(cpuPosition, currentMarker);
-                advanceTurn();
-                return;
         }
     }
 
@@ -285,6 +389,7 @@ const gameController = (function(playerOne, playerTwo) {
         matchCountUp();
         resetTurnCount();
         updateCurrentPlayer();
+        cpuCornerDirection = '';
     }
 
     const newGame = () => {
