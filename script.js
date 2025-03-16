@@ -77,7 +77,7 @@ const playerO = createPlayer('CPU', 'o', 'cpu');
 
 
 const gameController = (function(playerOne, playerTwo) {
-    let matchCount = 0;
+    let matchCount = 1;
     const matchCountUp = () => matchCount++;
     const getMatchCount = () => matchCount;
     const resetMatchCount = () => matchCount = 0;
@@ -89,11 +89,12 @@ const gameController = (function(playerOne, playerTwo) {
 
     let currentPlayer = playerOne;
     let firstTurnPlayer;
+    const getFirstTurnPlayer = () => firstTurnPlayer;
     let secondTurnPlayer;
     const getCurrentPlayer = () => currentPlayer;
     const updateCurrentPlayer = () => {
 
-        if(matchCount % 2 === 0){
+        if(matchCount % 2 !== 0){
             firstTurnPlayer = playerOne;
             secondTurnPlayer = playerTwo;
         } else {
@@ -116,17 +117,23 @@ const gameController = (function(playerOne, playerTwo) {
         let currentMarker = currentPlayer.getMarker();
         if(gameboard.checkWinConditions(currentMarker)){
             setTimeout(() => {
-                alert(`${currentPlayer.getName()} wins!`);
-                currentPlayer.addPoint();
-                newMatch();
-                displayController.renderBoard();
+                displayController.displayResults('win', currentPlayer.getName());
+                setTimeout(() => {
+                    currentPlayer.addPoint();
+                    newMatch();
+                    displayController.renderBoard();
+                    displayController.displayRound();
+                }, 2000)
             }, 100)
             return;
         } else if(gameboard.checkForDraw()){
             setTimeout(() => {
-                alert(`Draw!`);
-                newMatch();
-                displayController.renderBoard();
+                displayController.displayResults('draw', currentPlayer.getName());
+                setTimeout(() => {
+                    newMatch();
+                    displayController.renderBoard();
+                    displayController.displayRound();
+                }, 2000)
             }, 100)
             return;
         } else {
@@ -179,6 +186,16 @@ const gameController = (function(playerOne, playerTwo) {
                     if(board[a] === currentMarker && board[c] === currentMarker && board[b] === ''){
                         console.log('should win');
                         gameboard.placeMarker(b, currentMarker);
+                        advanceTurn();
+                        return;
+                    } else if(board[a] === currentMarker && board[b] === currentMarker && board[c] === ''){
+                        gameboard.placeMarker(c, currentMarker);
+                        console.log('should win');
+                        advanceTurn();
+                        return;
+                    } else if(board[b] === currentMarker && board[c] === currentMarker && board[a] === ''){
+                        gameboard.placeMarker(a, currentMarker);
+                        console.log('should win');
                         advanceTurn();
                         return;
                     }
@@ -389,6 +406,7 @@ const gameController = (function(playerOne, playerTwo) {
         matchCountUp();
         resetTurnCount();
         updateCurrentPlayer();
+        displayController.updateScores();
         cpuCornerDirection = '';
     }
 
@@ -405,6 +423,7 @@ const gameController = (function(playerOne, playerTwo) {
              matchCountUp, 
              getMatchCount, 
              resetMatchCount,
+             getFirstTurnPlayer,
              getCurrentPlayer, 
              updateCurrentPlayer, 
              playTurn,
@@ -436,7 +455,31 @@ const displayController = (function() {
             cell.textContent = board[indexNumber];
         }
     }
-    return { initBoard, renderBoard }
+
+    const updateScores = () => {
+        let playerXScore = document.querySelector('.player-one .score');
+        let playerOScore = document.querySelector('.player-two .score');
+        playerXScore.textContent = ` score: ${playerX.getScore()}`;
+        playerOScore.textContent = ` score: ${playerO.getScore()}`;
+        return;
+    }
+
+    let roundInfo = document.querySelector('.round-info');
+    const displayResults = (results, player) => {
+        if(results === 'draw'){
+            roundInfo.textContent = 'draw';
+        } else {
+            roundInfo.textContent = `${player} wins`
+        }
+    }
+
+    const displayRound = () => {
+        let roundCount = gameController.getMatchCount();
+        roundInfo.textContent = `round ${roundCount}`;
+        return;
+    }
+
+    return { initBoard, renderBoard, updateScores, displayResults, displayRound }
 })()
 
 
