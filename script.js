@@ -111,28 +111,34 @@ const gameController = (function(playerOne, playerTwo) {
 
     }
 
+    let gameboardState = 'active';
+    const getGameboardState = () => gameboardState;
 
     const advanceTurn = () => {
         displayController.renderBoard();
         let currentMarker = currentPlayer.getMarker();
         if(gameboard.checkWinConditions(currentMarker)){
             setTimeout(() => {
+                gameboardState = 'inactive';
                 displayController.displayResults('win', currentPlayer.getName());
                 setTimeout(() => {
                     currentPlayer.addPoint();
                     newMatch();
                     displayController.renderBoard();
                     displayController.displayRound();
+                    gameboardState = 'active';
                 }, 2000)
             }, 100)
             return;
         } else if(gameboard.checkForDraw()){
             setTimeout(() => {
+                gameboardState = 'inactive';
                 displayController.displayResults('draw', currentPlayer.getName());
                 setTimeout(() => {
                     newMatch();
                     displayController.renderBoard();
                     displayController.displayRound();
+                    gameboardState = 'active';
                 }, 2000)
             }, 100)
             return;
@@ -429,7 +435,8 @@ const gameController = (function(playerOne, playerTwo) {
              playTurn,
              playCpuTurn, 
              newMatch,
-             newGame }
+             newGame,
+             getGameboardState }
 })(playerX, playerO);
 
 
@@ -444,11 +451,14 @@ const displayController = (function() {
     const initBoard = () => {
         for(let cell of displayCells) {
             cell.addEventListener('click', () => {
-                let indexNumber = cell.dataset.index;
-                gameController.playTurn(indexNumber);
+                if(gameController.getGameboardState() === 'active'){
+                    let indexNumber = cell.dataset.index;
+                    gameController.playTurn(indexNumber);
+                }
             })
         }
     }
+
     const renderBoard = () => {
         for(let cell of displayCells){
             let indexNumber = cell.dataset.index;
