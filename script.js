@@ -70,8 +70,8 @@ const createPlayer = function(name, marker, status) {
     return { getName, setName, getMarker, addPoint, getScore, getCpuStatus }
 };
 
-const playerX = createPlayer('Player One', 'x', 'player');
-const playerO = createPlayer('Player Two', 'o', 'cpu');
+const playerX = createPlayer('Player', 'x', 'player');
+const playerO = createPlayer('CPU', 'o', 'cpu');
 
 
 
@@ -345,7 +345,7 @@ const gameController = (function(playerOne, playerTwo) {
                         gameboard.placeMarker(4, currentMarker);
                         advanceTurn();
                         return;
-                    } else if(board[4] === enemyMarker) {
+                    } else if(board[4] === enemyMarker && fourCornersArray.includes('')) {
                         console.log('random corner')
                         currentCornerIndex = Math.floor(Math.random() * 4);
                         cpuCurrentCorner = fourCorners[currentCornerIndex];

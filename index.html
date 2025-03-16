@@ -7,17 +7,26 @@
     <title>Tic-Tac-Toe</title>
 </head>
 <body>
-    <div class="gameboard-container">
-        <div class="cell top left" data-index="0"></div>
-        <div class="cell top" data-index="1"></div>
-        <div class="cell top right" data-index="2"></div>
-        <div class="cell left" data-index="3"></div>
-        <div class="cell" data-index="4"></div>
-        <div class="cell right" data-index="5"></div>
-        <div class="cell bottom left" data-index="6"></div>
-        <div class="cell bottom" data-index="7"></div>
-        <div class="cell bottom right" data-index="8"></div>
+    <div class="title-container">
+        <h1>tic-tac-toe</h1>
+        <p>a game for my friend slois</p>
     </div>
+    <div class="game-display">
+        <h2 class="player-one">player | x | score: <span class="score">0</span></h2>
+        <div class="gameboard-container">
+            <div class="cell top left" data-index="0"></div>
+            <div class="cell top" data-index="1"></div>
+            <div class="cell top right" data-index="2"></div>
+            <div class="cell left" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell right" data-index="5"></div>
+            <div class="cell bottom left" data-index="6"></div>
+            <div class="cell bottom" data-index="7"></div>
+            <div class="cell bottom right" data-index="8"></div>
+        </div>
+        <h2 class="player-two">cpu | o | score:<span class="score">0</span></h2>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
