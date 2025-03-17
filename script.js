@@ -493,7 +493,12 @@ const displayController = (function() {
 })()
 
 
-
+let playerXName = document.getElementById('name')
+playerXName.addEventListener('input', () => {
+    let newName = playerXName.value;
+    playerX.setName(newName);
+    return;
+})
 
 document.addEventListener('DOMContentLoaded', () => {
     displayController.initBoard();

@@ -52,7 +52,7 @@ body {
 
 .player-one,
 .player-two {
-    width: 360px;
+    width: 480px;
     display: flex;
     justify-content: center;
 }
@@ -61,6 +61,34 @@ body {
     display: flex;
     justify-content: flex-end;
     padding-right: 20px;
+    height: 30px;
+    margin: 20px 0px;
+}
+
+.player-one * {
+    font-size: 1.5em;
+    display: inline-block;
+    border: none;
+    font-weight: bold;
+    height: 30px;
+    margin: 0px;
+    align-self: center;
+}
+
+
+
+#name {
+    width: 220px;
+    text-align: right;
+    padding-right: 12px;
+
+}
+
+#name:hover,
+#name:focus {
+    border: none;
+    outline: none;
+    background-color: lightgray;
 }
 
 .player-two {
