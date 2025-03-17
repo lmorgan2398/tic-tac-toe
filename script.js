@@ -64,10 +64,13 @@ const createPlayer = function(name, marker, status) {
     let score = 0;
     const addPoint = () => score++;
     const getScore = () => score; 
+    const resetScore = () => {
+        score = 0;
+    }
 
     let cpuStatus = status;
     let getCpuStatus = () => cpuStatus;
-    return { getName, setName, getMarker, addPoint, getScore, getCpuStatus }
+    return { getName, setName, getMarker, addPoint, getScore, resetScore, getCpuStatus }
 };
 
 const playerX = createPlayer('Player', 'x', 'player');
@@ -80,7 +83,7 @@ const gameController = (function(playerOne, playerTwo) {
     let matchCount = 1;
     const matchCountUp = () => matchCount++;
     const getMatchCount = () => matchCount;
-    const resetMatchCount = () => matchCount = 0;
+    const resetMatchCount = () => matchCount = 1;
 
     let turnCount = 0;
     const turnCountUp = () => turnCount++;
@@ -152,6 +155,9 @@ const gameController = (function(playerOne, playerTwo) {
     }
 
     const playTurn = (position) => {
+        if(displayController.getRoundInfo() === 'play first turn to start game') {
+            displayController.displayRound();
+        };
         let currentMarker = currentPlayer.getMarker();
         if(!gameboard.placeMarker(position, currentMarker)){
             return;
@@ -475,6 +481,8 @@ const displayController = (function() {
     }
 
     let roundInfo = document.querySelector('.round-info');
+    const getRoundInfo = () => roundInfo.textContent;
+    const setRoundInfo = (string) => roundInfo.textContent = string;
     const displayResults = (results, player) => {
         if(results === 'draw'){
             roundInfo.textContent = 'draw';
@@ -489,7 +497,7 @@ const displayController = (function() {
         return;
     }
 
-    return { initBoard, renderBoard, updateScores, displayResults, displayRound }
+    return { initBoard, renderBoard, updateScores, displayResults, displayRound, getRoundInfo, setRoundInfo }
 })()
 
 
@@ -500,7 +508,35 @@ playerXName.addEventListener('input', () => {
     return;
 })
 
+playerXName.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === 'Esc' || e.key === 'Escape')
+        playerXName.blur();
+})
+
+playerXName.addEventListener('blur', () => {
+    if(playerXName.value.trim() === '' || playerXName.value === null){
+        playerXName.value = 'player';
+    }
+})
+
 document.addEventListener('DOMContentLoaded', () => {
     displayController.initBoard();
     gameController.updateCurrentPlayer();
+})
+
+let resetButton = document.querySelector('.reset-button');
+resetButton.addEventListener('click', () => {
+    if(gameController.getGameboardState() === 'active'){
+        playerX.setName('player');
+        gameController.resetMatchCount();
+        gameController.resetTurnCount();
+        playerX.resetScore();
+        playerO.resetScore();
+        gameboard.resetBoard();
+        displayController.renderBoard();
+        displayController.displayRound();
+        displayController.updateScores();
+        displayController.setRoundInfo('play first turn to start game');
+        gameController.updateCurrentPlayer();
+    };
 })
