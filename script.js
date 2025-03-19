@@ -369,12 +369,45 @@ const gameController = (function(playerOne, playerTwo) {
                         }   
                     }
                 } else {
+                    // Play center if available
                     if(board[4] === ''){
                         console.log('center');
                         gameboard.placeMarker(4, currentMarker);
                         advanceTurn();
                         return;
-                    } else if(board[4] === enemyMarker && fourCornersArray.includes('')) {
+                    // Check to see if there is a side/corner win condition set up
+                    // This happens when two 'adjacent' sides have been played around the 
+                    // center, leaving the corner open to setup two win conditions at once
+                    } else if (board[1] === enemyMarker && board[3] === enemyMarker && board[0] === ''){
+                        console.log('blocking in corner 0')
+                        currentCornerIndex = 0;
+                        cpuCurrentCorner = fourCorners[currentCornerIndex];
+                        gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                        advanceTurn();
+                        return;
+                    } else if(board[3] === enemyMarker && board[7] === enemyMarker && board[6] === ''){
+                        console.log('blocking in corner 6')
+                        currentCornerIndex = 3;
+                        cpuCurrentCorner = fourCorners[currentCornerIndex];
+                        gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                        advanceTurn();
+                        return;
+                    } else if(board[7] === enemyMarker && board[5] === enemyMarker && board[8] === ''){                            
+                        console.log('blocking in corner 8')
+                        currentCornerIndex = 2;
+                        cpuCurrentCorner = fourCorners[currentCornerIndex];
+                        gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                        advanceTurn();                            
+                        return;
+                    } else if(board[5] === enemyMarker && board[1] === enemyMarker && board[2] === ''){
+                        console.log('blocking in corner 2');
+                        currentCornerIndex = 1;
+                        cpuCurrentCorner = fourCorners[currentCornerIndex];
+                        gameboard.placeMarker(cpuCurrentCorner, currentMarker);
+                        advanceTurn();                            
+                        return;
+                    // Play a random corner if the board is safe and the center is taken
+                    } else if(board[4] !== '' && fourCornersArray.includes('')) {
                         console.log('random corner')
                         currentCornerIndex = Math.floor(Math.random() * 4);
                         cpuCurrentCorner = fourCorners[currentCornerIndex];
@@ -385,6 +418,7 @@ const gameController = (function(playerOne, playerTwo) {
                         gameboard.placeMarker(cpuCurrentCorner, currentMarker);
                         advanceTurn();
                         return;
+                    // If all corners are taken, play a random side instead
                     } else {
                         console.log('random side');
                         if(board[0] === enemyMarker && board[8] === enemyMarker || board[2] === enemyMarker && board[6] === enemyMarker){
